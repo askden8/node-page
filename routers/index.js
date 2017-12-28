@@ -6,6 +6,8 @@ const ctrlLogin = require('../controllers/login');
 const ctrlContact = require('../controllers/contact');
 const ctrlMywork = require('../controllers/mywork');
 const config = require('../config.json');
+const formidable = require('formidable');
+const fs = require('fs');
 router.get('/', ctrlHome.getIndex);
 //router.post('/', ctrlHome.sendData);
 
@@ -30,16 +32,60 @@ router.post('/login', function (req, res) {
 router.get('/login.html', function (req, res) {
     res.render('pages/login');
 });
-//router.get('/login',ctrlLogin.getLogin());
+
+
+router.post('/my-work', function (req, res) {
+    console.log(req.body);
+    let form = new formidable.IncomingForm();
+    let upload = 'public/upload';
+    let fileName;
+
+    if (!fs.existsSync(upload)) {
+        fs.mkdirSync(upload);
+    }
+
+    form.uploadDir = path.join(process.cwd(), upload);
+    form.parse(req, function (err, fields, files) {
+        if (err) {
+            return next(err);
+        }
+
+        if (files.photo.name === '' || files.photo.size === 0) {
+            return res.json({msg: 'Не загружена картинка!', status: 'Error'});
+        }
+
+        if (!fields.projectName) {
+            fs.unlink(files.photo.path);
+            return res.json({msg: 'Все поля нужно заполнить!', status: 'Error'});
+        }
+
+        fileName = path.join(upload, files.photo.name);
+
+        fs.rename(files.photo.path, fileName, function (err) {
+            if (err) {
+                console.error(err);
+                fs.unlink(fileName);
+                fs.rename(files.photo.path, fileName);
+            }
+            let dir = fileName.substr(fileName.indexOf('\\'));
+            db.set(fields.name, dir);
+            db.save();
+            return res.json({mes: "Проект успешно загружен", status: "OK"});
+        });
+    })
+
+});
 router.get('/my-work.html', function (req, res) {
     res.render('pages/my-work');
 });
-router.get('/contact-me.html', function (req, res) {
-    res.render('pages/contact-me');
-});
+
+
 router.post('/contact-me', function (req, res) {
     console.log("send form");
     sendmail(req, res);
+});
+router.get('/contact-me.html', function (req, res) {
+    res.render('pages/contact-me');
 });
 module.exports = router;
 
