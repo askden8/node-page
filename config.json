@@ -6,9 +6,33 @@
       "port": 465,
       "secure": true,
       "auth": {
-        "user": "webinar.loftschool@gmail.com",
-        "pass": "qsc12345"
+        "user": "",
+        "pass": ""
       }
     }
+  },
+  "database": {
+    "host": "127.0.0.1",
+    "port": 5984,
+    "works": [
+      {
+        "title": "gfff",
+        "image": "upload/IMG_20171213_193008.jpg",
+        "url": "okio",
+        "description": "ok,kok,"
+      },
+      {
+        "title": "999",
+        "image": "upload/IMG_20171213_183405.jpg",
+        "url": "999",
+        "description": "999"
+      },
+      {
+        "title": "kiji",
+        "image": "upload/IMG_20171213_191050.jpg",
+        "url": "ikik",
+        "description": "iokio"
+      }
+    ]
   }
 }
