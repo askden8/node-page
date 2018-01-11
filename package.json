@@ -1,0 +1,29 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/askden8/node-page.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/askden8/node-page/issues"
+  },
+  "homepage": "https://github.com/askden8/node-page#readme",
+  "dependencies": {
+    "koa": "^2.4.1",
+    "koa-body": "^2.5.0",
+    "koa-convert": "^1.2.0",
+    "koa-pug": "^3.0.0-2",
+    "koa-router": "^7.3.0",
+    "koa-static": "^4.0.2",
+    "pug": "^2.0.0-rc.4"
+  }
+}

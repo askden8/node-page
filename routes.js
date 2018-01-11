@@ -3,48 +3,35 @@ const router = new KoaRouter();
 
 
 const koaBody = require('koa-body');
-
-const mainPage = ctx =
->
-{
-    ctx.render('index');
-}
-;
-
-const login = ctx =
->
-{
-    //ctx.set('Content-Type', 'text/html');
-    ctx.render('login');
-}
-;
-
-const contactMe = ctx =
->
-{
-    ctx.render('contact-me');
-}
-;
-
-const myWork = ctx =
->
-{
-    ctx.render('my-work');
-}
-;
+const controllers = require("./controllers/pages");
 
 
-router.get('/', mainPage);
-router.get('/login.html', login);
-router.get('/contact-me.html', contactMe);
-router.get('/my-work.html', myWork);
+router.get('/', controllers.mainPage);
+router.get('/login.html', controllers.login);
+router.get('/contact-me.html', controllers.contactMe);
+router.get('/my-work.html', controllers.myWork);
 
 router.post('/upload', koaBody({
     multipart: true,
     formidable: {
         uploadDir: __dirname + '/uploads'
     }
-}), login);
+}), controllers.login);
 
+router.post('/login', koaBody(), function (ctx) {
+    console.log(ctx.request);
+    console.log(ctx.request.body);
+    if (ctx.request.body.login === "111") {
+        ctx.body = {
+            mes: 'Aвторизация успешна!',
+            status: 'OK'
+        };
+    } else {
+        ctx.body = {
+            mes: "Логин и/или пароль введены неверно!",
+            status: "Error"
+        };
+    }
+});
 
 module.exports = router;
