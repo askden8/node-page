@@ -1,5 +1,7 @@
 extends ../layouts/main_layout.pug
 
+
+
 block link
 	-var selected = 'Мои работы';
 
@@ -52,6 +54,15 @@ block content
 								a.zoom-link(href="http://loftschool.com/", target="_blank") loftschool.com
 						a.project-link(href="http://loftschool.com/", target="_blank") loftschool.com
 						.project-desc Школа онлайн образования
+                    //new walue
+                    each val in projects
+                        li.projects-item
+                            .hover-img
+                                img.project-img(src=val.image, alt="kovalchuk.us")
+                                .zoom-wrapper
+                                    a.zoom-link(href="http://kovalchuk.us/", target="_blank") kovalchuk.us
+                            a.project-link(href="http://kovalchuk.us/", target="_blank") kovalchuk.us
+                            .project-desc #{val.image}
 					//- Добавить проект
 					li.projects-item.add-new-item
 						a.add-new-link#add-new-item(href="#")
