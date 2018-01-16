@@ -16,7 +16,7 @@ nconf.argv()
 
 
 router.get('/', controllers.mainPage);
-router.get('/login.html', controllers.login);
+router.get("/login", controllers.login);
 router.get('/contact-me.html', controllers.contactMe);
 router.get('/my-work.html', controllers.myWork);
 
@@ -43,9 +43,9 @@ router.post('/login', koaBody(), function (ctx) {
     }
 });
 
-router.post('/contact-me', koaBody(), function (ctx) {
+router.post('/contact-me', koaBody(), async function (ctx) {
     console.log("send mail")
-    sendmail(ctx);
+    await sendmail(ctx);
 });
 
 
@@ -77,15 +77,10 @@ router.post('/my-work', koaBody({
         return ctx.body = {msg: 'Все поля нужно заполнить!', status: 'Error'};
     }
     fileName = path.join(upload, ctx.request.body.files.file.name);
-    fs.rename(ctx.request.body.files.file.path, fileName, function (err) {
-        if (err) {
-            console.error(err);
-            fs.unlink(fileName);
-            fs.rename(files.file.path, fileName);
-        }
+    try {
+        await fs.rename(ctx.request.body.files.file.path, fileName);
         let dir = fileName.substr(fileName.indexOf('\\'));
-        //  write to db
-        var list = [];
+        let list = [];
         list = nconf.get('database').works;
         const rec = {
             title: ctx.request.body.fields.projectName,
@@ -93,19 +88,17 @@ router.post('/my-work', koaBody({
             url: ctx.request.body.fields.projectUrl,
             description: ctx.request.body.fields.text
         };
-        console.log("list", list);
-        console.log("rec", rec);
         list.push(rec);
-        //list.push(6);
         nconf.set('database:works', list);
-        console.log(nconf.get('database'));
         nconf.save();
         ctx.body = {mes: "Проект успешно загружен", status: "OK"};
-    });
+    } catch (e) {
+        fs.unlink(fileName);
+        fs.rename(files.file.path, fileName);
+    }
 })
 
-
-var sendmail = function (ctx) {
+var sendmail = async function (ctx) {
     try {
         console.log("Body", ctx.request.body);
         if (!ctx.request.body.name || !ctx.request.body.email || !ctx.request.body.message) {
@@ -129,12 +122,12 @@ var sendmail = function (ctx) {
             //если есть ошибки при отправке - сообщаем об этом
             if (error) {
                 console.log("send error form", error);
-                sendresult(false, ctx);
-                return;
+                return sendresult(false, ctx);
+
             }
             console.log("send ok form");
-            sendresult(true, ctx);
-            return;
+            return sendresult(true, ctx);
+
         });
     } catch (e) {
         console.log('ERROR!!', e)
@@ -147,12 +140,12 @@ function sendresult(isSend, ctx) {
     try {
         console.log("sendresult");
         if (isSend) {
-            ctx.body = {
+            return ctx.body = {
                 mes: "Сообщение отправлено!",
                 status: "OK"
             };
         } else {
-            ctx.body = {
+            return ctx.body = {
                 mes: "Описание ошибки",
                 status: "Error"
             };
